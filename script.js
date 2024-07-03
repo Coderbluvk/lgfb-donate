@@ -1,7 +1,25 @@
+// Function to open MoonPay in a new tab
 function openMoonPay() {
-  window.open("https://www.moonpay.com/buy/btc", "_blank");
+  // Replace 'https://www.moonpay.com' with your actual MoonPay URL
+  window.open("https://www.moonpay.com", "_blank");
+
+  // Enable the "I have made this donation" button
+  document.getElementById("confirmDonationBtn").disabled = false;
 }
 
+// Function to submit the form (assuming you have a form with id="myForm")
+document.getElementById("myForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  // Check if "Continue/Make Payment" button was clicked before enabling the form submission
+  if (document.getElementById("confirmDonationBtn").disabled) {
+    alert('Please click "Continue/Make Payment" first.');
+    return;
+  }
+
+  // Proceed with form submission or other actions
+  sendForm(event);
+});
 // scripts.js
 
 function copyBitcoinAddress() {
@@ -29,43 +47,74 @@ document.querySelectorAll(".amount-box").forEach((box) => {
   });
 });
 
-function submitDonation() {
-  const form = document.getElementById("donationForm");
-  if (form.checkValidity()) {
-    const fullName = document.getElementById("fullName").value;
-    const email = document.getElementById("email").value;
-    const amount = document.getElementById("amount").value;
-    const paymentProof = document.getElementById("paymentProof").files[0];
-    const agreePolicy = document.getElementById("agreePolicy").checked;
+(function () {
+  // https://dashboard.emailjs.com/admin/account
+  emailjs.init("OrMvvN5aoYDYfaHuu");
 
-    if (paymentProof && agreePolicy) {
-      const formData = new FormData();
-      formData.append("fullName", fullName);
-      formData.append("email", email);
-      formData.append("amount", amount);
-      formData.append("paymentProof", paymentProof);
+  // Function to handle form submission
+  function sendForm(event) {
+    event.preventDefault();
 
-      document.getElementById("loader").style.display = "block";
+    // Get the form element
+    const form = document.getElementById("myForm");
 
-      emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", form).then(
-        () => {
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("popup").style.display = "block";
-          document.getElementById("userName").textContent = fullName;
+    // Create an object to get values from form fields
+    const templateParams = {
+      from_name: document.querySelector("#name").value,
+      from_email: document.querySelector("#email").value,
+      amount: amount.value,
+      message: document.querySelector("#paymentProof").value,
+    };
+
+    // Send the email using the EmailJS service
+    emailjs
+      .send("service_wlm11to", "template_jpcdi3a", templateParams)
+      .then(function (response) {
+        // Check if any of the form fields are empty
+        if (
+          templateParams.from_name === "" ||
+          templateParams.from_email === "" ||
+          templateParams.amount === "" ||
+          templateParams.message === ""
+        ) {
+          // Error pop-up message
+          emptyError();
+          console.log("FAILED...");
+          return;
+        } else {
+          // Success pop-up message
+          success();
+          console.log("SUCCESS!", response.status, response.text);
+          // Reset the form after successful submission
           setTimeout(() => {
-            document.getElementById("popup").style.display = "none";
-          }, 5000);
-        },
-        (error) => {
-          document.getElementById("loader").style.display = "none";
-          alert("Failed to send email. Please try again later.");
-          console.log("EmailJS Error:", error);
+            form.reset();
+          }, 5);
         }
-      );
-    } else {
-      alert("Please complete all required fields and agree to the policy.");
-    }
-  } else {
-    form.reportValidity();
+      })
+      .catch(function (error) {
+        console.log("FAILED...", error);
+      });
   }
+
+  // Attach event listener to the form
+  document.getElementById("myForm").addEventListener("submit", sendForm);
+})();
+
+// Sweet Alert Integration
+// Failed message for empty fields
+function emptyError() {
+  Swal.fire({
+    title: "Sorry boo...",
+    text: "Fields cannot be empty",
+    icon: "error",
+  });
+}
+
+// Success message after email submission
+function success() {
+  Swal.fire({
+    title: "Donation Details Submitted",
+    text: "Thank you for your generosity! A confirmation email has been sent to you. Please check your inbox for further instructions.",
+    icon: "success",
+  });
 }
