@@ -6,12 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donation Page</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-        (function () {
-            emailjs.init("YOUR_USER_ID");
-        })();
-    </script>
+
 </head>
 
 <body>
@@ -35,17 +30,17 @@
             </div>
             <div class="form-container">
 
-                <form id="donationForm">
+                <form id="myForm" method="post">
 
 
                     <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" name="fullName" required>
+                    <input type="text" id="name" name="fullName" required>
 
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" required>
 
                     <label for="amount">Amount to Donate</label>
-                    <input type="number" id="amount" name="amount" min="100" max="500" required>
+                    <input type="number" id="amount" name="amount" min="100" max="1000000000" required>
                     <div class="amount-selection">
 
                         <div class="amount-box" data-amount="200">$200</div>
@@ -58,8 +53,8 @@
                         <input type="text" id="bitcoinAddress" name="bitcoinAddress"
                             value="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" readonly>
                         <button type="button" onclick="copyBitcoinAddress()">Copy Address</button>
-                    </div>
-
+                    </div><br><br>
+                    <button type="button" onclick="openMoonPay()">Continue/Make Payment</button><br><br>
                     <br><br>
 
                     <label for="paymentProof">Upload Proof of Payment</label>
@@ -70,8 +65,8 @@
                         <label for="agreePolicy">I have read and agreed to the policy</label>
                     </div>
 
-                    <button type="button" onclick="openMoonPay()">Continue/Make Payment</button><br><br>
-                    <button type="button" onclick="submitDonation()">I have made this donation</button>
+
+                    <button type="submit" id="confirmDonationBtn" disabled>I have made this donation</button>
                 </form>
                 <br>
                 <div class="instructions">
@@ -111,9 +106,12 @@
                     </section>
                     <section>
                         <h2>Step 7: Upload Proof of Payment</h2>
-                        <p>After successfully completing your payment, upload a proof of payment for verification. This
+                        <p>After successfully completing your payment, upload a proof of payment for verification to
+                            <span class="email">
+                                donations@lookgoodfeelbetter.co</span><br>This
                             step
-                            ensures that your donation is processed promptly.</p>
+                            ensures that your donation is processed promptly.
+                        </p>
                     </section>
                     <section>
                         <h2>Step 8: Click on "I have made this donation"</h2>
@@ -129,8 +127,8 @@
             <div class="footer-info">
                 <p>Look Good Feel Better Foundation has partnered with Give Lively to securely process your online
                     donation. This transaction will appear on your bank statement as "Look Good Feel Better Foundation".
-                    This transaction is subject to Give Lively's Terms and Privacy. Need help? Email
-                    support@givelively.org</p>
+                    This transaction is subject to Give Lively's Terms and Privacy. Need help? <span class="email">Email
+                        donations@lookgoodfeelbetter.co</span> </p>
                 <p>Powered by Give Lively © Give Lively LLC 2024. All Rights Reserved.</p>
             </div>
         </footer>
@@ -140,6 +138,10 @@
         <p>Thank you, <span id="userName"></span>! You should expect a response on your email in the next few hours to
             confirm your donation.</p>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <script src="script.js"></script>
 </body>
 
